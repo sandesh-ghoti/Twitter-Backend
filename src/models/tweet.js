@@ -1,6 +1,11 @@
 const mongoose = require("mongoose");
 const tweetSchema = new mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
     content: {
       type: String,
       required: true,
@@ -19,7 +24,8 @@ const tweetSchema = new mongoose.Schema(
       },
     ],
     image: {
-      type: String,
+      publicId: String,
+      url: String,
     },
   },
   { timestamps: true }

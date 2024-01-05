@@ -1,44 +1,62 @@
 const mongoose = require("mongoose");
-
-const userSchema = mongoose.Schema(
-    {
-        name: {
-            type: String,
-            required: true,
-        },
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            lowercase: true,
-        },
-        password: {
-            type: String,
-            required: true,
-            select: false,
-        },
-        bio: {
-            type: String,
-        },
-        avatar: {
-            publicId: String,
-            url: String,
-        },
-        followers: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
-            },
-        ],
-        followings: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User",
-            },
-        ]
+const { Auth } = require("../utils/common/");
+const userSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
     },
-    {
-        timestamps: true,
-    }
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      // select: false,
+    },
+    bio: {
+      type: String,
+    },
+    avatar: {
+      publicId: String,
+      url: String,
+    },
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    followings: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
 );
-module.exports=mongoose.model('User',userSchema)
+
+userSchema.pre("save", async (next) => {
+  const user = this;
+  const password = await Auth.hashPassword(user.password);
+  user.password = password;
+  next();
+});
+userSchema.methods.comparePassword = async (password) => {
+  const check = await Auth.comparePassword(password, this.password);
+  return check;
+};
+userSchema.methods.generateAccessToken = () => {
+  return Auth.generateAccessToken({ id: this._id, email: this.email });
+};
+userSchema.methods.generateRefreshToken = () => {
+  return Auth.generateRefreshToken({ id: this._id, email: this.email });
+};
+const user = mongoose.model("User", userSchema);
+module.exports = user;
