@@ -1,1 +1,3 @@
-module.exports={}
+module.exports = {
+  UserMiddleware: require("./userMiddlewares"),
+};

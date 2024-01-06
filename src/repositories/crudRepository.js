@@ -23,7 +23,7 @@ class CrudRepository {
     }
     return res;
   }
-  async getAll(data={}) {
+  async getAll(data = {}) {
     const res = await this.model.find(data);
     return res;
   }

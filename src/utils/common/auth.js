@@ -29,15 +29,12 @@ async function refreshAccessToken(refreshToken) {
   } catch (error) {
     if (error instanceof AppError) throw error;
     if (error.name == "JsonWebTokenError") {
-      throw new AppError("Invalid JWT token", StatusCodes.BAD_REQUEST);
+      throw new AppError(["Invalid JWT token"], StatusCodes.BAD_REQUEST);
     }
     if (error.name == "TokenExpiredError") {
-      throw new AppError("JWT token expired", StatusCodes.BAD_REQUEST);
+      throw new AppError(["JWT token expired"], StatusCodes.BAD_REQUEST);
     }
-    throw new AppError(
-      "Something went wrong",
-      StatusCodes.INTERNAL_SERVER_ERROR
-    );
+    throw new AppError([e.message], StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 async function validateAccessToken(accessToken) {
@@ -49,6 +46,13 @@ async function validateAccessToken(accessToken) {
     const id = decoded.id;
     return id;
   } catch (e) {
+    if (error instanceof AppError) throw error;
+    if (error.name == "JsonWebTokenError") {
+      throw new AppError(["Invalid JWT token"], StatusCodes.BAD_REQUEST);
+    }
+    if (error.name == "TokenExpiredError") {
+      throw new AppError(["JWT token expired"], StatusCodes.BAD_REQUEST);
+    }
     throw new AppError([e.message], StatusCodes.BAD_REQUEST);
   }
 }
@@ -60,6 +64,7 @@ function generateAccessToken(data) {
   });
 }
 function generateRefreshToken(data) {
+  console.log("generating refreshToken");
   return jwt.sign(data, REFRESH_TOKEN_PRIVATE_KEY, {
     expiresIn: REFRESH_JWT_EXPIRY,
   });

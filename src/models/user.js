@@ -8,14 +8,18 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
+      match: /^\S+@\S+\.\S+$/,
       required: true,
       unique: true,
+      trim: true,
       lowercase: true,
     },
     password: {
       type: String,
       required: true,
-      // select: false,
+      select: false,
+      minlength: 6,
+      maxlength: 128,
     },
     bio: {
       type: String,
@@ -42,7 +46,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.pre("save", async (next) => {
+userSchema.pre("save", async function save(next) {
   const user = this;
   const password = await Auth.hashPassword(user.password);
   user.password = password;

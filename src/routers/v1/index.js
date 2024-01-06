@@ -1,1 +1,13 @@
-module.exports={}
+const express = require("express");
+const router = express.Router();
+const likeRoute = require("./likeRoutes");
+const commentRoute = require("./commentRoutes");
+const hashtagRoute = require("./hashtagRoutes");
+const tweetRoute = require("./tweetRoutes");
+const userRoute = require("./userRoutes");
+router.use("/like", likeRoute);
+router.use("/comment", commentRoute);
+router.use("/hashtag", hashtagRoute);
+router.use("/tweet", tweetRoute);
+router.use("/user", userRoute);
+module.exports = router;
