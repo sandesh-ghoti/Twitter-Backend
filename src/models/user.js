@@ -47,6 +47,7 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", async function save(next) {
+  if (!this.isModified("password")) return next();
   const user = this;
   const password = await Auth.hashPassword(user.password);
   user.password = password;

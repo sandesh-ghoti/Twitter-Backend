@@ -38,7 +38,32 @@ async function update(id, data) {
     );
   }
 }
-async function destroy(id, data) {
+async function updateFollowing(id, userId) {
+  try {
+    // update followings of id and followers of userId
+    const user = await userRepository.get(id);
+    const userToFollow = await userRepository.get(userId);
+    let idx = user.followings.indexOf(userToFollow);
+    if (idx > -1) {
+      //unfollow
+      user.followings.splice(idx, 1);
+      idx = userToFollow.followers.indexOf(id);
+      userToFollow.followers.splice(idx, 1);
+    } else {
+      user.followings.push(userId);
+      userToFollow.followers.push(id);
+    }
+    await user.save();
+    await userToFollow.save();
+    return user;
+  } catch (error) {
+    throw new AppError(
+      error.name + " " + error.message,
+      StatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
+}
+async function destroy(id) {
   try {
     const user = await userRepository.destroy(id);
     return "Success";
@@ -53,5 +78,6 @@ module.exports = {
   signup,
   signin,
   update,
+  updateFollowing,
   destroy,
 };

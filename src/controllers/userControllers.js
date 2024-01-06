@@ -42,6 +42,17 @@ async function signin(req, res) {
       .json(ErrorResponse);
   }
 }
+async function signout(req, res) {
+  try {
+    res.clearCookie("jwt", { httpOnly: true, secure: true });
+    SuccessResponse.data = "logout successfully";
+    return res.status(StatusCodes.OK).send(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error;
+    ErrorResponse.message = error.name;
+    return res.status(StatusCodes.NOT_MODIFIED).send(ErrorResponse);
+  }
+}
 async function refreshAccessToken(req, res) {
   try {
     const cookies = req.cookies;
@@ -58,8 +69,15 @@ async function refreshAccessToken(req, res) {
       .json(ErrorResponse);
   }
 }
-async function update(req, res) {
+async function updateDetails(req, res) {
   try {
+    // update name, bio, avatar
+    const data = {};
+    if (req.body.name) data.name = req.body.name;
+    if (req.body.bio) data.bio = req.body.bio;
+    if (req.body.avatar && req.body.avatar.url) data.bio = req.body.avatar;
+    const result = await UserService.update(req.body.user.id, data);
+    SuccessResponse.data = result;
     return res.status(StatusCodes.OK).json(SuccessResponse);
   } catch (error) {
     ErrorResponse.error = error.message;
@@ -70,4 +88,28 @@ async function update(req, res) {
       .json(ErrorResponse);
   }
 }
-module.exports = { signup, signin, refreshAccessToken, update };
+async function updateFollowing(req, res) {
+  try {
+    const result = await UserService.updateFollowing(
+      req.body.user.id,
+      req.body.userId
+    );
+    SuccessResponse.data = result;
+    return res.status(StatusCodes.OK).json(SuccessResponse);
+  } catch (error) {
+    ErrorResponse.error = error.message;
+    return res
+      .status(
+        error.statusCode ? error.statusCode : StatusCodes.INTERNAL_SERVER_ERROR
+      )
+      .json(ErrorResponse);
+  }
+}
+module.exports = {
+  signup,
+  signin,
+  signout,
+  refreshAccessToken,
+  updateDetails,
+  updateFollowing,
+};
