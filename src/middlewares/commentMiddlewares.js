@@ -1,4 +1,5 @@
 const { ErrorResponse } = require("../utils/common");
+const { Tweet, Comment } = require("../utils/common/modelName");
 const AppError = require("../utils/errors/appError");
 const { StatusCodes } = require("http-status-codes");
 
@@ -16,6 +17,19 @@ async function createMiddleware(req, res, next) {
       StatusCodes.BAD_REQUEST
     );
     return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  }
+  if (
+    !req.body.onModel.toLowerCase() == Tweet.toLowerCase() &&
+    !req.body.onModel.toLowerCase() == Comment.toLowerCase()
+  ) {
+    ErrorResponse.message = "Something went wrong while create like unlike";
+    ErrorResponse.error = `req.body.onModel not valid, only ${Tweet} and ${Comment} allowed`;
+    return res.status(StatusCodes.BAD_REQUEST).json(ErrorResponse);
+  }
+  if (req.body.onModel.toLowerCase() == Tweet.toLowerCase()) {
+    req.body.onModel = Tweet;
+  } else {
+    req.body.onModel = Comment;
   }
   next();
 }

@@ -1,4 +1,5 @@
 const { CommentRepository, TweetRepository } = require("../repositories");
+const { Tweet } = require("../utils/common/modelName");
 const AppError = require("../utils/errors/appError");
 const { StatusCodes } = require("http-status-codes");
 const commentRepository = new CommentRepository();
@@ -6,11 +7,12 @@ const tweetRepository = new TweetRepository();
 async function create(data) {
   try {
     let parent;
-    if (data.onModel === "Tweet") {
+    if (data.onModel == Tweet) {
       parent = await tweetRepository.get(data.commentedOn);
     } else {
       parent = await commentRepository.get(data.commentedOn);
     }
+    console.log("at tweet", data.onModel, parent);
     if (!parent) {
       throw new AppError(
         [`parent ${data.onModel} not found`],
