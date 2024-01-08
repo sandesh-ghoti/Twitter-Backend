@@ -5,9 +5,11 @@ const commentRoute = require("./commentRoutes");
 const hashtagRoute = require("./hashtagRoutes");
 const tweetRoute = require("./tweetRoutes");
 const userRoute = require("./userRoutes");
-router.use("/like", likeRoute);
-router.use("/comment", commentRoute);
-router.use("/hashtag", hashtagRoute);
-router.use("/tweet", tweetRoute);
+const { authentication } = require("../../middlewares/userMiddlewares");
+
+router.use("/like", authentication, likeRoute);
+router.use("/comment", authentication, commentRoute);
+router.use("/hashtag", authentication, hashtagRoute);
+router.use("/tweet", authentication, tweetRoute);
 router.use("/user", userRoute);
 module.exports = router;

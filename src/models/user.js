@@ -57,10 +57,14 @@ userSchema.methods.comparePassword = async (password) => {
   const check = await Auth.comparePassword(password, this.password);
   return check;
 };
-userSchema.methods.generateAccessToken = () => {
-  return Auth.generateAccessToken({ id: this._id, email: this.email });
+userSchema.methods.generateAccessToken = function generate() {
+  const accessToken = Auth.generateAccessToken({
+    id: this._id,
+    email: this.email,
+  });
+  return accessToken;
 };
-userSchema.methods.generateRefreshToken = () => {
+userSchema.methods.generateRefreshToken = function generate() {
   return Auth.generateRefreshToken({ id: this._id, email: this.email });
 };
 const user = mongoose.model("User", userSchema);

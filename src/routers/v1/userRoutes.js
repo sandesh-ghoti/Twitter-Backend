@@ -16,7 +16,15 @@ router.get(
 );
 router.get("/signout", UserController.signout);
 // user
-router.put("/updateDetails", UserController.updateDetails);
+router.put(
+  "/updateDetails",
+  UserMiddleware.authentication,
+  UserController.updateDetails
+);
 //follow and unfollow
-router.put("/updateFollowing", UserController.updateFollowing);
+router.put(
+  "/updateFollowing",
+  UserMiddleware.authentication,
+  UserController.updateFollowing
+);
 module.exports = router;
