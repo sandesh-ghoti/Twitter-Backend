@@ -45,26 +45,24 @@ async function validateAccessToken(accessToken) {
     const decoded = jwt.verify(accessToken, ACCESS_TOKEN_PRIVATE_KEY);
     const id = decoded.id;
     return id;
-  } catch (e) {
+  } catch (error) {
     if (error instanceof AppError) throw error;
     if (error.name == "JsonWebTokenError") {
-      throw new AppError(["Invalid JWT token"], StatusCodes.BAD_REQUEST);
+      throw new AppError(["Invalid JWT token"], StatusCodes.UNAUTHORIZED);
     }
     if (error.name == "TokenExpiredError") {
-      throw new AppError(["JWT token expired"], StatusCodes.BAD_REQUEST);
+      throw new AppError(["JWT token expired"], StatusCodes.UNAUTHORIZED);
     }
     throw new AppError([e.message], StatusCodes.BAD_REQUEST);
   }
 }
 //internal function
 function generateAccessToken(data) {
-  console.log("generating accessToken");
   return jwt.sign(data, ACCESS_TOKEN_PRIVATE_KEY, {
     expiresIn: ACCESS_JWT_EXPIRY,
   });
 }
 function generateRefreshToken(data) {
-  console.log("generating refreshToken");
   return jwt.sign(data, REFRESH_TOKEN_PRIVATE_KEY, {
     expiresIn: REFRESH_JWT_EXPIRY,
   });

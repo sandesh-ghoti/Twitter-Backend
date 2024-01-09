@@ -3,4 +3,5 @@ module.exports = {
   CommentControllers: require("./commentControllers"),
   TweetControllers: require("./tweetControllers"),
   LikeControllers: require("./likeControllers"),
+  HashtagControllers: require("./hashtagControllers"),
 };

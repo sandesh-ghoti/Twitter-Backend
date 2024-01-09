@@ -1,11 +1,35 @@
 const AppError = require("../utils/errors/appError");
 const { StatusCodes } = require("http-status-codes");
-const { TweetRepository, CommentRepository } = require("../repositories");
+const {
+  TweetRepository,
+  CommentRepository,
+  HashtagRepository,
+} = require("../repositories");
 const tweetRepository = new TweetRepository();
 const commentRepository = new CommentRepository();
+const hashtagRepository = new HashtagRepository();
 async function create(data) {
   try {
     const result = await tweetRepository.create(data);
+    // find all hashtag from content and query from db and create new one for new one and append new tweet id init
+    const regex = new RegExp(/#\w+/, "g");
+    const tags = data.content
+      .match(regex)
+      .map((tag) => tag.substring(1).toLowerCase());
+    // find exist and notExist tags
+    const exists = await hashtagRepository.findByName(tags);
+    const existsTitle = exists.map((tag) => tag.title);
+    let notExists = tags.filter((tag) => !existsTitle.includes(tag));
+    //create new tags for notExist tags
+    notExists = notExists.map((tag) => {
+      return { title: tag, tweets: [result._id] };
+    });
+    await hashtagRepository.insertMany(notExists);
+    // insert tweet id in exists tags
+    await exists.forEach(async (tag) => {
+      await tag.tweets.push(result._id);
+      await tag.save();
+    });
     return result;
   } catch (error) {
     throw new AppError(

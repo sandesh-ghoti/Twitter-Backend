@@ -75,7 +75,7 @@ async function updateDetails(req, res) {
     const data = {};
     if (req.body.name) data.name = req.body.name;
     if (req.body.bio) data.bio = req.body.bio;
-    if (req.body.avatar && req.body.avatar.url) data.bio = req.body.avatar;
+    if (req.body.avatar && req.body.avatar.url) data.avatar = req.body.avatar;
     const result = await UserService.update(req.body.user.id, data);
     SuccessResponse.data = result;
     return res.status(StatusCodes.OK).json(SuccessResponse);

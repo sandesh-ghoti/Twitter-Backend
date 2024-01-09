@@ -3,4 +3,5 @@ module.exports = {
   CommentMiddleware: require("./commentMiddlewares"),
   TweetMiddleware: require("./tweetMiddleware"),
   LikeMiddleware: require("./likeMiddlewares"),
+  HashtagMiddleware: require("./hashtagMiddlewares"),
 };

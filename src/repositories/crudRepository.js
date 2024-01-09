@@ -30,7 +30,7 @@ class CrudRepository {
   async update(id, data) {
     //data must be object
     const res = await this.model.findByIdAndUpdate(id, data);
-    if (!res[0]) {
+    if (!res) {
       throw new AppError(`unable to find the resource`, StatusCodes.NOT_FOUND);
     }
     return res;

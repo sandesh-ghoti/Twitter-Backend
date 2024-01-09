@@ -3,4 +3,5 @@ module.exports = {
   CommentService: require("./commentServices"),
   TweetService: require("./tweetServices"),
   LikeService: require("./likeServices"),
+  HashtagService: require("./hashtagService"),
 };
